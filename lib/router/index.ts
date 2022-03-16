@@ -5,9 +5,9 @@ import {
 } from 'lib/middlewares/types';
 import { Request } from 'lib/request';
 import { Response } from 'lib/response';
-import { queryParser } from 'lib/utils/query-parser.util';
 import { HttpMethod } from './constants/http-method';
 import { Route, RouteCollection, RouteHandler } from './types';
+import { URL } from 'url';
 
 export class Router {
 	private readonly middlewares: MiddlewareCollection = [];
@@ -67,11 +67,34 @@ export class Router {
 		this.routes.push(route);
 	};
 
-	public matchRoute(method: string, path: string): Route | undefined {
-		return this.routes.find(
-			route => route.method === method && route.path === path
-		);
+	public matchRoute(request: Request): Route | undefined {
+		const { method, url: path } = request;
+
+		const parsedPath = this.splitPath(path);
+
+		return this.routes.find(route => {
+			if (route.method !== method) return false;
+
+			const parsedRoutePath = this.splitPath(route.path);
+
+			if (parsedPath.length !== parsedRoutePath.length) return false;
+
+			for (let i = 0; i < parsedPath.length; i++) {
+				if (parsedRoutePath[i].charAt(0) === ':') {
+					const key = parsedRoutePath[i].substring(1);
+					request.params[key] = parsedPath[i];
+					continue;
+				}
+
+				if (parsedPath[i] === parsedRoutePath[i]) continue;
+			}
+
+			return true;
+		});
 	}
+
+	private splitPath = (path: string) =>
+		path.charAt(0) === '/' ? path.substring(1).split('/') : path.split('/');
 
 	public use = (middleware: Router | Middleware) => {
 		if (middleware instanceof Router) {
@@ -84,11 +107,11 @@ export class Router {
 	};
 
 	public handle = async (request: Request, response: Response) => {
-		queryParser(request);
+		this.parseQueryParams(request);
 
 		const { method, url } = request;
 
-		const route = this.matchRoute(method, url);
+		const route = this.matchRoute(request);
 
 		if (!route)
 			return response.send(404, {
@@ -103,5 +126,11 @@ export class Router {
 		}
 
 		return route.handler(request, response);
+	};
+
+	private parseQueryParams = (request: Request) => {
+		const url = new URL(`http://${request.headers.host}${request.url}`);
+		request.query = Object.fromEntries(url.searchParams);
+		request.url = url.pathname;
 	};
 }

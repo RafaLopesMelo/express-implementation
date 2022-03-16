@@ -5,4 +5,6 @@ export interface Request extends IncomingMessage {
 	body: Record<string, unknown> | undefined;
 	method: string;
 	url: string;
+
+	params: Record<string, string>;
 }
