@@ -1,6 +1,5 @@
 import { router } from './app/routes';
-import { server } from '../lib';
-import { bodyParser } from '../lib/middlewares/body-parser.middleware';
+import { server, bodyParser } from '@lib';
 
 const app = server();
 

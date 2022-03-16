@@ -1,4 +1,4 @@
-import { RouteHandler } from '../../../../lib/router/types';
+import { RouteHandler } from '@lib';
 import { IUsersRepository } from './users.repository';
 
 export class UsersController {

@@ -1,4 +1,4 @@
-import { Router } from '../../../lib/router';
+import { Router } from '@lib';
 import { UsersController } from '../modules/users/users.controller';
 import { usersRepository } from '../modules/users/users.repository';
 
