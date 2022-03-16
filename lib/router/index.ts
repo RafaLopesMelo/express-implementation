@@ -1,7 +1,16 @@
+import {
+	Middleware,
+	MiddlewareCollection,
+	NextFunction
+} from 'lib/middlewares/types';
+import { Request } from 'lib/request';
+import { Response } from 'lib/response';
+import { queryParser } from 'lib/utils/query-parser.util';
 import { HttpMethod } from './constants/http-method';
 import { Route, RouteCollection, RouteHandler } from './types';
 
 export class Router {
+	private readonly middlewares: MiddlewareCollection = [];
 	private readonly routes: RouteCollection = [];
 
 	public get = (path: string, handler: RouteHandler) => {
@@ -64,7 +73,35 @@ export class Router {
 		);
 	}
 
-	public use = (router: Router) => {
-		this.routes.push(...router.routes);
+	public use = (middleware: Router | Middleware) => {
+		if (middleware instanceof Router) {
+			this.routes.push(...middleware.routes);
+			this.middlewares.push(...middleware.middlewares);
+			return;
+		}
+
+		this.middlewares.push(middleware);
+	};
+
+	public handle = async (request: Request, response: Response) => {
+		queryParser(request);
+
+		const { method, url } = request;
+
+		const route = this.matchRoute(method, url);
+
+		if (!route)
+			return response.send(404, {
+				message: `Cannot ${method} ${url}`
+			});
+
+		for (const middleware of this.middlewares) {
+			await new Promise(resolve => {
+				const next = resolve as NextFunction;
+				middleware(request, response, next);
+			});
+		}
+
+		return route.handler(request, response);
 	};
 }
