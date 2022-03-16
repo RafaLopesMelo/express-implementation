@@ -1,4 +1,4 @@
-import { Router } from '../../lib/router';
+import { Router } from '../../../lib';
 import { usersRouter } from './users.router';
 
 const router = new Router();
