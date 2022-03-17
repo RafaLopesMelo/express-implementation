@@ -6,5 +6,8 @@ const usersRouter = new Router();
 const usersController = new UsersController(usersRepository);
 
 usersRouter.get('/users', usersController.fetchAll);
+usersRouter.post('/users', usersController.store);
+usersRouter.put('/users/:id', usersController.update);
+usersRouter.delete('/users/:id', usersController.delete);
 
 export { usersRouter };

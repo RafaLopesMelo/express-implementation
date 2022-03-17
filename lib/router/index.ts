@@ -79,9 +79,12 @@ export class Router {
 
 			if (parsedPath.length !== parsedRoutePath.length) return false;
 
+			if (!request.params) request.params = {};
+
 			for (let i = 0; i < parsedPath.length; i++) {
 				if (parsedRoutePath[i].charAt(0) === ':') {
 					const key = parsedRoutePath[i].substring(1);
+
 					request.params[key] = parsedPath[i];
 					continue;
 				}
