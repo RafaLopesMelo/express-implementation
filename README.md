@@ -1,6 +1,8 @@
+![Coding](https://user-images.githubusercontent.com/60680170/158721163-6d95f1df-fb2a-473e-8a27-919ed79037c3.png)
+
 # Express Implementation
 
-## Goal
+## 🏁 Goal
 
 The goal of this project is to be an "express like" application without using any framework, thus all the features were created using native module.
 
@@ -10,7 +12,7 @@ The first one is inside the "lib" folder. Inside it there are many classes that 
 
 The second one is inside "src" folder. Inside it there is an example of implementation using our "custom express library". The implementation is just a user's CRUD. Each operation explores a functionality of our library, just as query parameters, path parameters and body parsing.
 
-## Technologies
+## 👨‍💻 Technologies
 
 The main idea of this application is to use less external libraries as possible, so I did it without any. As you can see in ```package.json``` file there are only dev dependencies installed.
 
@@ -26,7 +28,7 @@ And finally for git hooks I picked Husky, configuring ESLint analysis before eve
 - Editor Config
 - Husky
 
-## Running the project
+## ▶️ Running the project
 
 Running the project is quite simple, just clone the repository and run the following commands:
 
